@@ -1,0 +1,12 @@
+{
+	"name": "webedit/grid",
+	"require": {
+		"webedit/application": "dev-master",
+		"nette/forms": "dev-master"
+	},
+	"autoload": {
+		"psr-4": {
+			"WebEdit\\": "src/"
+		}
+	}
+}

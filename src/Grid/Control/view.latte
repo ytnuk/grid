@@ -1,0 +1,39 @@
+<div class="table-responsive" n:block="grid">
+	<table class="table table-condensed">
+		<thead>
+			<tr>
+				<th>
+					<a n:href="this order=>NULL" n:class="btn,btn-info,btn-sm,btn-block,!$order?disabled">
+						<i class="glyphicon glyphicon-sort-by-order"></i>
+					</a>
+				</th>
+				<th n:foreach="reset($items)->inputs as $input">
+					<a n:href="order $input->getHtmlName()" n:class="btn,btn-info,btn-sm,$input->getHtmlName()===$orderBy?active" n:if="!$input instanceof \Nette\Forms\Controls\Button">
+						<i class="glyphicon glyphicon-sort{if $input->getHtmlName() === $orderBy}-by-attributes{if $order === 'DESC'}-alt{/if}{/if}"></i>
+					</a>
+					{label $input /}
+				</th>
+			</tr>
+		</thead>
+		<tbody n:inner-foreach="$items as $item">
+			<tr id="{$item->form->getElementPrototype()->id}">
+				<form n:name="$item->form" n:tag-if="$item->active">
+					<th>
+						<a href="{if $item->link && $item->active && (!$filter || $item->item)}{$item->link}{elseif $item->item}{link this#{$item->form->getElementPrototype()->id} active=>$item->id}{else}{link this filter=>NULL}{/if}" class="btn btn-block btn-{if $item->link && $item->active && (!$filter || $item->item)}primary{elseif $item->item}default{if $item->active} disabled{/if}{else}danger{if !$filter} disabled{/if}{/if}">
+							<i class="glyphicon glyphicon-{if $item->link && $item->active && (!$filter || $item->item)}new-window{elseif $item->item}edit{else}remove{/if}"></i>
+						</a>
+						{foreach $item->hidden as $hidden} {input $hidden} {/foreach}
+					</th>
+					<td n:foreach="$item->inputs as $input">
+						{input $input disabled=>!$item->active,class=>form-control}
+					</td>
+					<tr n:if="$item->active">
+						<td colspan="{count($item->inputs) + 1}">
+							{control $item->form body}
+						</td>
+					</tr>
+				</form>
+			</tr>
+		</tbody>
+	</table>
+</div>
