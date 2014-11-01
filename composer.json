@@ -2,7 +2,10 @@
 	"name": "webedit/grid",
 	"require": {
 		"webedit/application": "dev-master",
-		"nette/forms": "dev-master"
+		"nette/forms": "dev-master",
+		"webedit/config": "dev-master",
+		"nette/di": "dev-master",
+		"kdyby/translation": "dev-master"
 	},
 	"autoload": {
 		"psr-4": {
