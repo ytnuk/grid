@@ -2,6 +2,7 @@
 
 namespace WebEdit\Grid;
 
+use Nette;
 use Nette\Forms;
 use WebEdit\Application;
 
@@ -258,11 +259,11 @@ final class Control extends Application\Control
 	}
 
 	/**
-	 * @return Application\Control\Multiplier
+	 * @return Nette\Application\UI\Multiplier
 	 */
 	protected function createComponentForm()
 	{
-		return new Application\Control\Multiplier(function ($key) {
+		return new Nette\Application\UI\Multiplier(function ($key) {
 			return call_user_func($this->form, $this->items[$key]);
 		});
 	}
