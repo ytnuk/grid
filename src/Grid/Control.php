@@ -3,15 +3,14 @@
 namespace WebEdit\Grid;
 
 use Nette;
-use Nette\Forms;
-use WebEdit\Application;
+use WebEdit;
 
 /**
  * Class Control
  *
  * @package WebEdit\Grid
  */
-final class Control extends Application\Control
+final class Control extends WebEdit\Application\Control
 {
 
 	/**
@@ -79,9 +78,9 @@ final class Control extends Application\Control
 	}
 
 	/**
-	 * @param Forms\Controls\SubmitButton $button
+	 * @param Nette\Forms\Controls\SubmitButton $button
 	 */
-	public function filter(Forms\Controls\SubmitButton $button)
+	public function filter(Nette\Forms\Controls\SubmitButton $button)
 	{
 		$this->filter = $this->prepareFilterValues($button->getForm()
 			->getValues(TRUE));
@@ -220,10 +219,10 @@ final class Control extends Application\Control
 						}
 					}
 
-					return $filtered && ! $control instanceof Forms\Controls\HiddenField;
+					return $filtered && ! $control instanceof Nette\Forms\Controls\HiddenField;
 				}),
 				'hidden' => array_filter($controls, function ($control) {
-					return $control instanceof Forms\Controls\HiddenField;
+					return $control instanceof Nette\Forms\Controls\HiddenField;
 				}),
 				'link' => is_callable($this->link) ? call_user_func($this->link, $item) : $this->link,
 				'active' => $key !== $header ? $this->active === (string) $key : TRUE,
