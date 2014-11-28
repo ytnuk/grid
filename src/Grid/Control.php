@@ -1,16 +1,16 @@
 <?php
 
-namespace Kutny\Grid;
+namespace Ytnuk\Grid;
 
 use Nette;
-use Kutny;
+use Ytnuk;
 
 /**
  * Class Control
  *
- * @package Kutny\Grid
+ * @package Ytnuk\Grid
  */
-final class Control extends Kutny\Application\Control
+final class Control extends Ytnuk\Application\Control
 {
 
 	/**
