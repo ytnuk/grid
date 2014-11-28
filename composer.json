@@ -1,15 +1,15 @@
 {
-	"name": "webedit/grid",
+	"name": "kutny/grid",
 	"require": {
-		"webedit/application": "dev-master",
+		"kutny/application": "dev-master",
 		"nette/forms": "dev-master",
-		"webedit/config": "dev-master",
+		"kutny/config": "dev-master",
 		"nette/di": "dev-master",
 		"kdyby/translation": "dev-master"
 	},
 	"autoload": {
 		"psr-4": {
-			"WebEdit\\": "src/"
+			"Kutny\\": "src/"
 		}
 	}
 }

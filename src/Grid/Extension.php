@@ -1,17 +1,17 @@
 <?php
 
-namespace WebEdit\Grid;
+namespace Kutny\Grid;
 
 use Kdyby;
 use Nette;
-use WebEdit;
+use Kutny;
 
 /**
  * Class Extension
  *
- * @package WebEdit\Form
+ * @package Kutny\Form
  */
-final class Extension extends Nette\DI\CompilerExtension implements WebEdit\Config\Provider
+final class Extension extends Nette\DI\CompilerExtension implements Kutny\Config\Provider
 {
 
 	/**

@@ -1,16 +1,16 @@
 <?php
 
-namespace WebEdit\Grid;
+namespace Kutny\Grid;
 
 use Nette;
-use WebEdit;
+use Kutny;
 
 /**
  * Class Control
  *
- * @package WebEdit\Grid
+ * @package Kutny\Grid
  */
-final class Control extends WebEdit\Application\Control
+final class Control extends Kutny\Application\Control
 {
 
 	/**
