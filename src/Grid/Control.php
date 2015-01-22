@@ -168,6 +168,17 @@ final class Control extends Ytnuk\Application\Control
 		return $this;
 	}
 
+	public function handleEdit($id)
+	{
+		if ($this->presenter->isAjax()) {
+			$this->active = $id;
+			$this->redrawControl();
+			//TODO: every row should be separate component with @persistent $editable and here just set component with id to editable=TRUE & redraw only that component
+		} else {
+			$this->redirect('this', ['active' => $id]);
+		}
+	}
+
 	/**
 	 * @param $control
 	 */
@@ -179,6 +190,10 @@ final class Control extends Ytnuk\Application\Control
 		if ( ! is_array($this->items)) {
 			$this->items = iterator_to_array($this->items);
 		}
+	}
+
+	protected function startup() //TODO: ultra massive refactor
+	{
 		if ( ! $header = array_search(NULL, $this->items)) {
 			$this->items = array_reverse($this->items, TRUE);
 			$this->items[] = NULL;
@@ -228,10 +243,6 @@ final class Control extends Ytnuk\Application\Control
 				'active' => $key !== $header ? $this->active === (string) $key : TRUE,
 			];
 		}
-	}
-
-	protected function startup()
-	{
 		$this->template->items = $this->items;
 		$this->template->filter = $this->filter;
 		$this->template->orderBy = $this->arrayToHtmlName($this->order, $sort);

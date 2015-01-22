@@ -1,5 +1,5 @@
-{control message}
-<div class="table-responsive" n:block="grid">
+<div class="table-responsive" n:inner-snippet>
+	{control Ytnuk\Message\Control}
 	<table class="table table-condensed">
 		<thead>
 			<tr>
@@ -20,19 +20,14 @@
 			<tr id="{$item->form->getElementPrototype()->id}">
 				<form n:name="$item->form" n:tag-if="$item->active">
 					<th>
-						<a href="{if $item->link && $item->active && (!$filter || $item->item)}{$item->link}{elseif $item->item}{link this#{$item->form->getElementPrototype()->id} active=>$item->id}{else}{link this filter=>NULL}{/if}" class="btn btn-block btn-{if $item->link && $item->active && (!$filter || $item->item)}primary{elseif $item->item}default{if $item->active} disabled{/if}{else}danger{if !$filter} disabled{/if}{/if}">
+						<a href="{if $item->link && $item->active && (!$filter || $item->item)}{$item->link}{elseif $item->item}{link edit!#{$item->form->getElementPrototype()->id} $item->id}{else}{link this filter=>NULL}{/if}" class="btn btn-block btn-{if $item->link && $item->active && (!$filter || $item->item)}primary{elseif $item->item}default{if $item->active} disabled{/if}{else}danger{if !$filter} disabled{/if}{/if}">
 							<i class="glyphicon glyphicon-{if $item->link && $item->active && (!$filter || $item->item)}new-window{elseif $item->item}edit{else}remove{/if}"></i>
 						</a>
-						{foreach $item->hidden as $hidden} {input $hidden} {/foreach}
+						{foreach $item->hidden as $hidden}{input $hidden}{/foreach}
 					</th>
 					<td n:foreach="$item->inputs as $input">
 						{input $input disabled=>!$item->active,class=>form-control}
 					</td>
-					<tr n:if="$item->active">
-						<td colspan="{count($item->inputs) + 1}">
-							{control $item->form body}
-						</td>
-					</tr>
 				</form>
 			</tr>
 		</tbody>
