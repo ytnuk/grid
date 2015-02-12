@@ -170,7 +170,9 @@ final class Control extends Ytnuk\Application\Control
 
 	public function handleEdit($id)
 	{
-		if ($this->presenter->isAjax()) {
+		if ($this->getPresenter()
+			->isAjax()
+		) {
 			$this->active = $id;
 			$this->redrawControl();
 			//TODO: every row should be separate component with @persistent $editable and here just set component with id to editable=TRUE & redraw only that component
@@ -186,18 +188,14 @@ final class Control extends Ytnuk\Application\Control
 	{
 		parent::attached($control);
 		$this->active = $this->getParameter('active');
-		$this->items = call_user_func($this->items, $this->order, $this->filter);
-		if ( ! is_array($this->items)) {
-			$this->items = iterator_to_array($this->items);
-		}
 	}
 
 	protected function startup() //TODO: ultra massive refactor
 	{
-		if ( ! $header = array_search(NULL, $this->items)) {
-			$this->items = array_reverse($this->items, TRUE);
+		if ( ! $header = array_search(NULL, $this->getItems())) {
+			$this->items = array_reverse($this->getItems(), TRUE);
 			$this->items[] = NULL;
-			$this->items = array_reverse($this->items, TRUE);
+			$this->items = array_reverse($this->getItems(), TRUE);
 			$keys = array_keys($this->items);
 			$header = reset($keys);
 		}
@@ -207,14 +205,14 @@ final class Control extends Ytnuk\Application\Control
 			$this,
 			'filter'
 		];
-		foreach ($this->items as $key => $item) {
+		foreach ($this->getItems() as $key => $item) {
 			$controls = [];
 			$form = $this['form'][$key];
 			foreach ($form->getControls() as $control) {
 				$controls[$control->getHtmlName()] = $control;
 			}
 			$inputsCount = 0;
-			$this->items[$key] = (object) [
+			$this->setItem($key, (object) [
 				'id' => $key,
 				'item' => $item,
 				'form' => $form,
@@ -241,13 +239,41 @@ final class Control extends Ytnuk\Application\Control
 				}),
 				'link' => is_callable($this->link) ? call_user_func($this->link, $item) : $this->link,
 				'active' => $key !== $header ? $this->active === (string) $key : TRUE,
-			];
+			]);
 		}
-		$this->template->items = $this->items;
-		$this->template->filter = $this->filter;
-		$this->template->orderBy = $this->arrayToHtmlName($this->order, $sort);
-		$this->template->order = $sort;
-		$this->template->filteredInputs = $this->filteredInputs;
+		$this->getTemplate()
+			->add('items', $this->getItems())
+			->add('filter', $this->filter)
+			->add('orderBy', $this->arrayToHtmlName($this->order, $sort))
+			->add('order', $sort)
+			->add('filteredInputs', $this->filteredInputs);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getItems()
+	{
+		if ( ! is_array($this->items)) {
+			$this->items = call_user_func($this->items, $this->order, $this->filter);
+			if ($this->items instanceof \Traversable) {
+				$this->items = iterator_to_array($this->items);
+			}
+		}
+
+		return $this->items;
+	}
+
+	public function setItems(array $items)
+	{
+		$this->items = $items;
+	}
+
+	public function setItem($key, $item)
+	{
+		$items = $this->getItems();
+		$items[$key] = $item;
+		$this->setItems($items);
 	}
 
 	/**
@@ -274,7 +300,14 @@ final class Control extends Ytnuk\Application\Control
 	protected function createComponentForm()
 	{
 		return new Nette\Application\UI\Multiplier(function ($key) {
-			return call_user_func($this->form, $this->items[$key]);
+			return call_user_func($this->form, $this->getItem($key));
 		});
+	}
+
+	public function getItem($key)
+	{
+		$items = $this->getItems();
+
+		return $items[$key];
 	}
 }
