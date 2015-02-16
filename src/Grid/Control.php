@@ -82,8 +82,7 @@ final class Control extends Ytnuk\Application\Control
 	 */
 	public function filter(Nette\Forms\Controls\SubmitButton $button)
 	{
-		$this->filter = $this->prepareFilterValues($button->getForm()
-			->getValues(TRUE));
+		$this->filter = $this->prepareFilterValues($button->getForm()->getValues(TRUE));
 		$this->redirect('this');
 	}
 
@@ -170,8 +169,7 @@ final class Control extends Ytnuk\Application\Control
 
 	public function handleEdit($id)
 	{
-		if ($this->getPresenter()
-			->isAjax()
+		if ($this->getPresenter()->isAjax()
 		) {
 			$this->active = $id;
 			$this->redrawControl();
@@ -199,9 +197,7 @@ final class Control extends Ytnuk\Application\Control
 			$keys = array_keys($this->items);
 			$header = reset($keys);
 		}
-		$this['form'][$header]->setDefaults($this->filter)
-			->addSubmit('filter', 'grid.filter')
-			->setValidationScope(FALSE)->onClick[] = [
+		$this['form'][$header]->setDefaults($this->filter)->addSubmit('filter', 'grid.filter')->setValidationScope(FALSE)->onClick[] = [
 			$this,
 			'filter'
 		];
@@ -241,12 +237,7 @@ final class Control extends Ytnuk\Application\Control
 				'active' => $key !== $header ? $this->active === (string) $key : TRUE,
 			]);
 		}
-		$this->getTemplate()
-			->add('items', $this->getItems())
-			->add('filter', $this->filter)
-			->add('orderBy', $this->arrayToHtmlName($this->order, $sort))
-			->add('order', $sort)
-			->add('filteredInputs', $this->filteredInputs);
+		$this->getTemplate()->add('items', $this->getItems())->add('filter', $this->filter)->add('orderBy', $this->arrayToHtmlName($this->order, $sort))->add('order', $sort)->add('filteredInputs', $this->filteredInputs);
 	}
 
 	/**
