@@ -20,7 +20,7 @@
 			<tr id="{$item->form->getElementPrototype()->id}">
 				<form n:name="$item->form" n:tag-if="$item->active">
 					<th>
-						<a href="{if $item->active && (!$filter || $item->item)}{$item->link}{elseif $item->item}{link edit!#{$item->form->getElementPrototype()->id} $item->id}{else}{link this filter=>NULL}{/if}" class="btn btn-block btn-{if $item->link && $item->active && (!$filter || $item->item)}primary{elseif $item->item}default{if $item->active} disabled{/if}{else}danger{if !$filter} disabled{/if}{/if}">
+						<a n:attr="target=>$item->active && (!$filter || $item->item)?_blank:NULL" href="{if $item->active && (!$filter || $item->item)}{$item->link}{elseif $item->item}{link edit!#{$item->form->getElementPrototype()->id} $item->id}{else}{link this filter=>NULL}{/if}" class="btn btn-block btn-{if $item->link && $item->active && (!$filter || $item->item)}primary{elseif $item->item}default{if $item->active} disabled{/if}{else}danger{if !$filter} disabled{/if}{/if}">
 							<i class="glyphicon glyphicon-{if $item->active && (!$filter || $item->item)}new-window{elseif $item->item}edit{else}remove{/if}"></i>
 						</a>
 						{foreach $item->hidden as $hidden}{input $hidden}{/foreach}
