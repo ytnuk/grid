@@ -167,6 +167,9 @@ final class Control extends Ytnuk\Application\Control
 		return $this;
 	}
 
+	/**
+	 * @param int $id
+	 */
 	public function handleEdit($id)
 	{
 		if ($this->getPresenter()->isAjax()) {
@@ -179,7 +182,7 @@ final class Control extends Ytnuk\Application\Control
 	}
 
 	/**
-	 * @param $control
+	 * @inheritdoc
 	 */
 	protected function attached($control)
 	{
@@ -254,12 +257,19 @@ final class Control extends Ytnuk\Application\Control
 		return $this->items;
 	}
 
+	/**
+	 * @param array $items
+	 */
 	public function setItems(array $items)
 	{
 		$this->items = $items;
 	}
 
-	public function setItem($key, $item)
+	/**
+	 * @param int $key
+	 * @param \stdClass $item
+	 */
+	public function setItem($key, \stdClass $item)
 	{
 		$items = $this->getItems();
 		$items[$key] = $item;
@@ -294,6 +304,11 @@ final class Control extends Ytnuk\Application\Control
 		});
 	}
 
+	/**
+	 * @param int $key
+	 *
+	 * @return \stdClass
+	 */
 	public function getItem($key)
 	{
 		$items = $this->getItems();
