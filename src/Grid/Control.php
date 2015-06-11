@@ -190,7 +190,7 @@ final class Control extends Ytnuk\Application\Control
 		$this->active = $this->getParameter('active');
 	}
 
-	protected function startup() //TODO: ultra massive refactor
+	protected function startup() //TODO: ultra massive refactor, maybe use grid from someone else
 	{
 		if ( ! $header = array_search(NULL, $this->getItems())) {
 			$this->items = array_reverse($this->getItems(), TRUE);
