@@ -177,6 +177,9 @@ final class Control extends Ytnuk\Application\Control
 		$this->active = $this->getParameter('active');
 	}
 
+	/**
+	 * @return array
+	 */
 	protected function startup() //TODO: ultra massive refactor, maybe use grid from someone else
 	{
 		if ( ! $header = array_search(NULL, $this->getItems())) {
@@ -226,7 +229,14 @@ final class Control extends Ytnuk\Application\Control
 				'active' => $key !== $header ? $this->active === (string) $key : TRUE,
 			]);
 		}
-		$this->getTemplate()->add('items', $this->getItems())->add('filter', $this->filter)->add('orderBy', $this->arrayToHtmlName($this->order, $sort))->add('order', $sort)->add('filteredInputs', $this->filteredInputs);
+
+		return [
+			'items' => $this->getItems(),
+			'filter' => $this->filter,
+			'orderBy' => $this->arrayToHtmlName($this->order, $sort),
+			'order' => $sort,
+			'filteredInputs' => $this->filteredInputs,
+		];
 	}
 
 	/**
