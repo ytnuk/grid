@@ -12,6 +12,7 @@ use Ytnuk;
  */
 final class Control extends Ytnuk\Application\Control
 {
+	//TODO: every row should be separate component with @persistent $editable and here just set component with id to editable=TRUE & redraw only that component
 
 	/**
 	 * @var array
@@ -165,20 +166,6 @@ final class Control extends Ytnuk\Application\Control
 		$this->limitInputs = $limit;
 
 		return $this;
-	}
-
-	/**
-	 * @param int $id
-	 */
-	public function handleEdit($id)
-	{
-		if ($this->getPresenter()->isAjax()) {
-			$this->active = $id;
-			$this->redrawControl();
-			//TODO: every row should be separate component with @persistent $editable and here just set component with id to editable=TRUE & redraw only that component
-		} else {
-			$this->redirect('this', ['active' => $id]);
-		}
 	}
 
 	/**
