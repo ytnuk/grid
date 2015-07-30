@@ -1,5 +1,4 @@
 <?php
-
 namespace Ytnuk\Grid;
 
 use Kdyby;
@@ -11,7 +10,9 @@ use Ytnuk;
  *
  * @package Ytnuk\Form
  */
-final class Extension extends Nette\DI\CompilerExtension implements Ytnuk\Config\Provider
+final class Extension
+	extends Nette\DI\CompilerExtension
+	implements Ytnuk\Config\Provider
 {
 
 	/**
@@ -22,9 +23,9 @@ final class Extension extends Nette\DI\CompilerExtension implements Ytnuk\Config
 		return [
 			Kdyby\Translation\DI\TranslationExtension::class => [
 				'dirs' => [
-					__DIR__ . '/../../locale'
-				]
-			]
+					__DIR__ . '/../../locale',
+				],
+			],
 		];
 	}
 }

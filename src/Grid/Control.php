@@ -1,5 +1,4 @@
 <?php
-
 namespace Ytnuk\Grid;
 
 use Nette;
@@ -10,10 +9,11 @@ use Ytnuk;
  *
  * @package Ytnuk\Grid
  */
-final class Control extends Ytnuk\Application\Control
+final class Control
+	extends Ytnuk\Application\Control
 {
-	//TODO: every row should be separate component with @persistent $editable and here just set component with id to editable=TRUE & redraw only that component
 
+	//TODO: every row should be separate component with @persistent $editable and here just set component with id to editable=TRUE & redraw only that component
 	/**
 	 * @var array
 	 * @persistent
@@ -60,8 +60,10 @@ final class Control extends Ytnuk\Application\Control
 	 * @param callable $form
 	 * @param callable $items
 	 */
-	public function __construct(callable $form, callable $items)
-	{
+	public function __construct(
+		callable $form,
+		callable $items
+	) {
 		$this->form = $form;
 		$this->items = $items;
 	}
@@ -88,60 +90,15 @@ final class Control extends Ytnuk\Application\Control
 	}
 
 	/**
-	 * @param array $values
-	 *
-	 * @return array
-	 */
-	private function prepareFilterValues(array $values)
-	{
-		$data = [];
-		foreach ($values as $key => $value) {
-			if (is_array($value)) {
-				$value = $this->prepareFilterValues($value);
-			}
-			if ($value) {
-				$data[$key] = $value;
-			}
-		}
-
-		return $data;
-	}
-
-	/**
 	 * @param string $htmlName
 	 */
 	public function handleOrder($htmlName)
 	{
-		$this->order = $this->prepareOrderValues($this->htmlNameToArray($htmlName), $this->order);
+		$this->order = $this->prepareOrderValues(
+			$this->htmlNameToArray($htmlName),
+			$this->order
+		);
 		$this->redirect('this');
-	}
-
-	/**
-	 * @param array $keys
-	 * @param array $values
-	 *
-	 * @return array
-	 */
-	private function prepareOrderValues(array $keys, array $values)
-	{
-		$key = array_shift($keys);
-		end($values);
-		$active = $key === key($values);
-		$value = isset($values[$key]) ? $values[$key] : [];
-		unset($values[$key]);
-		$values[$key] = count($keys) ? $this->prepareOrderValues($keys, $value) : (! $active ? 'ASC' : ($value === 'ASC' ? 'DESC' : NULL));
-
-		return $values;
-	}
-
-	/**
-	 * @param string $htmlName
-	 *
-	 * @return array
-	 */
-	private function htmlNameToArray($htmlName)
-	{
-		return explode('[', str_replace([']'], NULL, $htmlName));
 	}
 
 	/**
@@ -169,83 +126,16 @@ final class Control extends Ytnuk\Application\Control
 	}
 
 	/**
-	 * @inheritdoc
-	 */
-	protected function attached($control)
-	{
-		parent::attached($control);
-		$this->active = $this->getParameter('active');
-	}
-
-	/**
-	 * @return array
-	 */
-	protected function startup() //TODO: ultra massive refactor, maybe use grid from someone else
-	{
-		if ( ! $header = array_search(NULL, $this->getItems())) {
-			$this->items = array_reverse($this->getItems(), TRUE);
-			$this->items[] = NULL;
-			$this->items = array_reverse($this->getItems(), TRUE);
-			$keys = array_keys($this->items);
-			$header = reset($keys);
-		}
-		$this['form'][$header]->setDefaults($this->filter)->addSubmit('filter', 'grid.filter')->setValidationScope(FALSE)->onClick[] = [
-			$this,
-			'filter'
-		];
-		foreach ($this->getItems() as $key => $item) {
-			$controls = [];
-			$form = $this['form'][$key];
-			foreach ($form->getControls() as $control) {
-				$controls[$control->getHtmlName()] = $control;
-			}
-			$inputsCount = 0;
-			$this->setItem($key, (object) [
-				'id' => $key,
-				'item' => $item,
-				'form' => $form,
-				'inputs' => array_filter($controls, function ($control) use ($form, $item, &$inputsCount) {
-					if ($this->limitInputs && $inputsCount > $this->limitInputs) {
-						return FALSE;
-					}
-					$inputsCount++;
-					if ($item === NULL) {
-						$control->setAttribute('onchange', 'this.form.filter.click()');
-					}
-					$filtered = ! (bool) $this->filteredInputs;
-					foreach ($this->filteredInputs as $name) {
-						if (strpos($control->getHtmlName(), $name) === 0) {
-							$filtered = TRUE;
-							break;
-						}
-					}
-
-					return $filtered && ! $control instanceof Nette\Forms\Controls\HiddenField;
-				}),
-				'hidden' => array_filter($controls, function ($control) {
-					return $control instanceof Nette\Forms\Controls\HiddenField;
-				}),
-				'link' => is_callable($this->link) ? call_user_func($this->link, $item) : $this->link,
-				'active' => $key !== $header ? $this->active === (string) $key : TRUE,
-			]);
-		}
-
-		return [
-			'items' => $this->getItems(),
-			'filter' => $this->filter,
-			'orderBy' => $this->arrayToHtmlName($this->order, $sort),
-			'order' => $sort,
-			'filteredInputs' => $this->filteredInputs,
-		];
-	}
-
-	/**
 	 * @return array
 	 */
 	public function getItems()
 	{
 		if ( ! is_array($this->items)) {
-			$this->items = call_user_func($this->items, $this->order, $this->filter);
+			$this->items = call_user_func(
+				$this->items,
+				$this->order,
+				$this->filter
+			);
 			if ($this->items instanceof \Traversable) {
 				$this->items = iterator_to_array($this->items);
 			}
@@ -266,39 +156,13 @@ final class Control extends Ytnuk\Application\Control
 	 * @param int $key
 	 * @param \stdClass $item
 	 */
-	public function setItem($key, \stdClass $item)
-	{
+	public function setItem(
+		$key,
+		\stdClass $item
+	) {
 		$items = $this->getItems();
 		$items[$key] = $item;
 		$this->setItems($items);
-	}
-
-	/**
-	 * @param array $values
-	 * @param array $value
-	 * @param bool $wrap
-	 *
-	 * @return string
-	 */
-	private function arrayToHtmlName(array $values, array &$value = NULL, $wrap = FALSE)
-	{
-		$value = end($values);
-		$key = key($values);
-		if ($wrap) {
-			$key = '[' . $key . ']';
-		}
-
-		return $key . (is_array($value) ? $this->arrayToHtmlName($value, $value, TRUE) : NULL);
-	}
-
-	/**
-	 * @return Nette\Application\UI\Multiplier
-	 */
-	protected function createComponentForm()
-	{
-		return new Nette\Application\UI\Multiplier(function ($key) {
-			return call_user_func($this->form, $this->getItem($key));
-		});
 	}
 
 	/**
@@ -311,5 +175,224 @@ final class Control extends Ytnuk\Application\Control
 		$items = $this->getItems();
 
 		return $items[$key];
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	protected function attached($control)
+	{
+		parent::attached($control);
+		$this->active = $this->getParameter('active');
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function startup() //TODO: ultra massive refactor, maybe use grid from someone else
+	{
+		if ( ! $header = array_search(
+			NULL,
+			$this->getItems()
+		)
+		) {
+			$this->items = array_reverse(
+				$this->getItems(),
+				TRUE
+			);
+			$this->items[] = NULL;
+			$this->items = array_reverse(
+				$this->getItems(),
+				TRUE
+			);
+			$keys = array_keys($this->items);
+			$header = reset($keys);
+		}
+		$this['form'][$header]->setDefaults($this->filter)->addSubmit(
+			'filter',
+			'grid.filter'
+		)->setValidationScope(FALSE)->onClick[] = [
+			$this,
+			'filter',
+		];
+		foreach (
+			$this->getItems() as $key => $item
+		) {
+			$controls = [];
+			$form = $this['form'][$key];
+			foreach (
+				$form->getControls() as $control
+			) {
+				$controls[$control->getHtmlName()] = $control;
+			}
+			$inputsCount = 0;
+			$this->setItem(
+				$key,
+				(object) [
+					'id' => $key,
+					'item' => $item,
+					'form' => $form,
+					'inputs' => array_filter(
+						$controls,
+						function ($control) use
+						(
+							$form,
+							$item,
+							&$inputsCount
+						) {
+							if ($this->limitInputs && $inputsCount > $this->limitInputs) {
+								return FALSE;
+							}
+							$inputsCount++;
+							if ($item === NULL) {
+								$control->setAttribute(
+									'onchange',
+									'this.form.filter.click()'
+								);
+							}
+							$filtered = ! (bool) $this->filteredInputs;
+							foreach (
+								$this->filteredInputs as $name
+							) {
+								if (strpos(
+										$control->getHtmlName(),
+										$name
+									) === 0
+								) {
+									$filtered = TRUE;
+									break;
+								}
+							}
+
+							return $filtered && ! $control instanceof Nette\Forms\Controls\HiddenField;
+						}
+					),
+					'hidden' => array_filter(
+						$controls,
+						function ($control) {
+							return $control instanceof Nette\Forms\Controls\HiddenField;
+						}
+					),
+					'link' => is_callable($this->link) ? call_user_func(
+						$this->link,
+						$item
+					) : $this->link,
+					'active' => $key !== $header ? $this->active === (string) $key : TRUE,
+				]
+			);
+		}
+
+		return [
+			'items' => $this->getItems(),
+			'filter' => $this->filter,
+			'orderBy' => $this->arrayToHtmlName(
+				$this->order,
+				$sort
+			),
+			'order' => $sort,
+			'filteredInputs' => $this->filteredInputs,
+		];
+	}
+
+	/**
+	 * @return Nette\Application\UI\Multiplier
+	 */
+	protected function createComponentForm()
+	{
+		return new Nette\Application\UI\Multiplier(
+			function ($key) {
+				return call_user_func(
+					$this->form,
+					$this->getItem($key)
+				);
+			}
+		);
+	}
+
+	/**
+	 * @param array $values
+	 *
+	 * @return array
+	 */
+	private function prepareFilterValues(array $values)
+	{
+		$data = [];
+		foreach (
+			$values as $key => $value
+		) {
+			if (is_array($value)) {
+				$value = $this->prepareFilterValues($value);
+			}
+			if ($value) {
+				$data[$key] = $value;
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * @param array $keys
+	 * @param array $values
+	 *
+	 * @return array
+	 */
+	private function prepareOrderValues(
+		array $keys,
+		array $values
+	) {
+		$key = array_shift($keys);
+		end($values);
+		$active = $key === key($values);
+		$value = isset($values[$key]) ? $values[$key] : [];
+		unset($values[$key]);
+		$values[$key] = count($keys) ? $this->prepareOrderValues(
+			$keys,
+			$value
+		) : (! $active ? 'ASC' : ($value === 'ASC' ? 'DESC' : NULL));
+
+		return $values;
+	}
+
+	/**
+	 * @param string $htmlName
+	 *
+	 * @return array
+	 */
+	private function htmlNameToArray($htmlName)
+	{
+		return explode(
+			'[',
+			str_replace(
+				[']'],
+				NULL,
+				$htmlName
+			)
+		);
+	}
+
+	/**
+	 * @param array $values
+	 * @param array $value
+	 * @param bool $wrap
+	 *
+	 * @return string
+	 */
+	private function arrayToHtmlName(
+		array $values,
+		array &$value = NULL,
+		$wrap = FALSE
+	) {
+		$value = end($values);
+		$key = key($values);
+		if ($wrap) {
+			$key = '[' . $key . ']';
+		}
+
+		return $key . (is_array($value) ? $this->arrayToHtmlName(
+			$value,
+			$value,
+			TRUE
+		) : NULL);
 	}
 }
