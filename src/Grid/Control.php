@@ -64,6 +64,7 @@ final class Control
 		callable $form,
 		callable $items
 	) {
+		parent::__construct();
 		$this->form = $form;
 		$this->items = $items;
 	}
