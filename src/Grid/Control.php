@@ -2,13 +2,9 @@
 namespace Ytnuk\Grid;
 
 use Nette;
+use stdClass;
 use Ytnuk;
 
-/**
- * Class Control
- *
- * @package Ytnuk\Grid
- */
 final class Control
 	extends Ytnuk\Application\Control
 {
@@ -56,10 +52,6 @@ final class Control
 	 */
 	private $limitInputs;
 
-	/**
-	 * @param callable $form
-	 * @param callable $items
-	 */
 	public function __construct(
 		callable $form,
 		callable $items
@@ -69,31 +61,20 @@ final class Control
 		$this->items = $items;
 	}
 
-	/**
-	 * @param array $filteredInputs
-	 *
-	 * @return $this
-	 */
-	public function filterInputs(array $filteredInputs)
+	public function filterInputs(array $filteredInputs) : self
 	{
 		$this->filteredInputs = $filteredInputs;
 
 		return $this;
 	}
 
-	/**
-	 * @param Nette\Forms\Controls\SubmitButton $button
-	 */
 	public function filter(Nette\Forms\Controls\SubmitButton $button)
 	{
 		$this->filter = $this->prepareFilterValues($button->getForm()->getValues(TRUE));
 		$this->redirect('this');
 	}
 
-	/**
-	 * @param string $htmlName
-	 */
-	public function handleOrder($htmlName)
+	public function handleOrder(string $htmlName)
 	{
 		$this->order = $this->prepareOrderValues(
 			$this->htmlNameToArray($htmlName),
@@ -102,34 +83,21 @@ final class Control
 		$this->redirect('this');
 	}
 
-	/**
-	 * @param callable $link
-	 *
-	 * @return $this
-	 */
-	public function setLink(callable $link)
+	public function setLink(callable $link) : self
 	{
 		$this->link = $link;
 
 		return $this;
 	}
 
-	/**
-	 * @param array $limit
-	 *
-	 * @return $this
-	 */
-	public function limitInputs(array $limit)
+	public function limitInputs(array $limit) : self
 	{
 		$this->limitInputs = $limit;
 
 		return $this;
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getItems()
+	public function getItems() : array
 	{
 		if ( ! is_array($this->items)) {
 			$this->items = call_user_func(
@@ -145,52 +113,34 @@ final class Control
 		return $this->items;
 	}
 
-	/**
-	 * @param array $items
-	 */
 	public function setItems(array $items)
 	{
 		$this->items = $items;
 	}
 
-	/**
-	 * @param int $key
-	 * @param \stdClass $item
-	 */
 	public function setItem(
-		$key,
-		\stdClass $item
+		int $key,
+		stdClass $item
 	) {
 		$items = $this->getItems();
 		$items[$key] = $item;
 		$this->setItems($items);
 	}
 
-	/**
-	 * @param int $key
-	 *
-	 * @return \stdClass
-	 */
-	public function getItem($key)
+	public function getItem(int $key)
 	{
 		$items = $this->getItems();
 
 		return $items[$key];
 	}
 
-	/**
-	 * @inheritdoc
-	 */
 	protected function attached($control)
 	{
 		parent::attached($control);
 		$this->active = $this->getParameter('active');
 	}
 
-	/**
-	 * @return array
-	 */
-	protected function startup() //TODO: ultra massive refactor, maybe use grid from someone else
+	protected function startup() : array //TODO: ultra massive refactor, maybe use grid from someone else
 	{
 		if ( ! $header = array_search(
 			NULL,
@@ -295,13 +245,10 @@ final class Control
 		];
 	}
 
-	/**
-	 * @return Nette\Application\UI\Multiplier
-	 */
-	protected function createComponentForm()
+	protected function createComponentForm() : Nette\Application\UI\Multiplier
 	{
 		return new Nette\Application\UI\Multiplier(
-			function ($key) {
+			function ($key) : Nette\Forms\Form {
 				return call_user_func(
 					$this->form,
 					$this->getItem($key)
@@ -310,12 +257,7 @@ final class Control
 		);
 	}
 
-	/**
-	 * @param array $values
-	 *
-	 * @return array
-	 */
-	private function prepareFilterValues(array $values)
+	private function prepareFilterValues(array $values) : array
 	{
 		$data = [];
 		foreach (
@@ -332,16 +274,11 @@ final class Control
 		return $data;
 	}
 
-	/**
-	 * @param array $keys
-	 * @param array $values
-	 *
-	 * @return array
-	 */
 	private function prepareOrderValues(
 		array $keys,
 		array $values
-	) {
+	) : array
+	{
 		$key = array_shift($keys);
 		end($values);
 		$active = $key === key($values);
@@ -355,12 +292,7 @@ final class Control
 		return $values;
 	}
 
-	/**
-	 * @param string $htmlName
-	 *
-	 * @return array
-	 */
-	private function htmlNameToArray($htmlName)
+	private function htmlNameToArray($htmlName) : array
 	{
 		return explode(
 			'[',
@@ -372,18 +304,12 @@ final class Control
 		);
 	}
 
-	/**
-	 * @param array $values
-	 * @param array $value
-	 * @param bool $wrap
-	 *
-	 * @return string
-	 */
 	private function arrayToHtmlName(
 		array $values,
 		array &$value = NULL,
-		$wrap = FALSE
-	) {
+		bool $wrap = FALSE
+	) : string
+	{
 		$value = end($values);
 		$key = key($values);
 		if ($wrap) {
