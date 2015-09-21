@@ -108,6 +108,9 @@ final class Control
 			if ($this->items instanceof \Traversable) {
 				$this->items = iterator_to_array($this->items);
 			}
+			$this->items = array_combine(array_map(function($key){
+				return str_replace('-', NULL, Nette\Utils\Strings::webalize($key));
+			},array_keys($this->items)), $this->items);
 		}
 
 		return $this->items;
@@ -119,7 +122,7 @@ final class Control
 	}
 
 	public function setItem(
-		int $key,
+		$key,
 		stdClass $item
 	) {
 		$items = $this->getItems();
@@ -127,7 +130,7 @@ final class Control
 		$this->setItems($items);
 	}
 
-	public function getItem(int $key)
+	public function getItem($key)
 	{
 		$items = $this->getItems();
 
