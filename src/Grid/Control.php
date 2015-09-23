@@ -9,6 +9,7 @@ final class Control
 	extends Ytnuk\Application\Control
 {
 
+	const NAME = 'grid';
 	//TODO: every row should be separate component with @persistent $editable and here just set component with id to editable=TRUE & redraw only that component
 	/**
 	 * @var array
@@ -108,9 +109,19 @@ final class Control
 			if ($this->items instanceof \Traversable) {
 				$this->items = iterator_to_array($this->items);
 			}
-			$this->items = array_combine(array_map(function($key){
-				return str_replace('-', NULL, Nette\Utils\Strings::webalize($key));
-			},array_keys($this->items)), $this->items);
+			$this->items = array_combine(
+				array_map(
+					function ($key) {
+						return str_replace(
+							'-',
+							NULL,
+							Nette\Utils\Strings::webalize($key)
+						);
+					},
+					array_keys($this->items)
+				),
+				$this->items
+			);
 		}
 
 		return $this->items;
