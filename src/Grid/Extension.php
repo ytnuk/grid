@@ -3,21 +3,16 @@ namespace Ytnuk\Grid;
 
 use Kdyby;
 use Nette;
-use Ytnuk;
 
 final class Extension
 	extends Nette\DI\CompilerExtension
-	implements Ytnuk\Config\Provider
+	implements Kdyby\Translation\DI\ITranslationProvider
 {
 
-	public function getConfigResources() : array
+	public function getTranslationResources() : array
 	{
 		return [
-			Kdyby\Translation\DI\TranslationExtension::class => [
-				'dirs' => [
-					__DIR__ . '/../../locale',
-				],
-			],
+			__DIR__ . '/../../locale',
 		];
 	}
 }
