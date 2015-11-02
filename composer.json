@@ -3,7 +3,6 @@
 	"require": {
 		"ytnuk/application": "dev-master",
 		"nette/forms": "dev-master",
-		"ytnuk/config": "dev-master",
 		"nette/di": "dev-master",
 		"kdyby/translation": "dev-master"
 	},
