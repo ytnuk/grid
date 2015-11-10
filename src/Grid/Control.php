@@ -296,7 +296,7 @@ final class Control
 		$key = array_shift($keys);
 		end($values);
 		$active = $key === key($values);
-		$value = isset($values[$key]) ? $values[$key] : [];
+		$value = $values[$key] ?? [];
 		unset($values[$key]);
 		$values[$key] = count($keys) ? $this->prepareOrderValues(
 			$keys,
