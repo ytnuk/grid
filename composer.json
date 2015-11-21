@@ -2,6 +2,7 @@
 	"name": "ytnuk/grid",
 	"type": "ytnuk-module",
 	"require": {
+		"ytnuk/module": "dev-master",
 		"ytnuk/application": "dev-master",
 		"nette/forms": "dev-master",
 		"nette/di": "dev-master",
