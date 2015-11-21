@@ -1,6 +1,6 @@
 {
 	"name": "ytnuk/grid",
-	"type": "ytnuk/module",
+	"type": "ytnuk-module",
 	"require": {
 		"ytnuk/application": "dev-master",
 		"nette/forms": "dev-master",
