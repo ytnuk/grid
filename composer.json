@@ -2,7 +2,7 @@
 	"name": "ytnuk/grid",
 	"extra": {
 		"extensions": {
-			"ytnuk/grid": "Ytnuk\\Grid\\Extension"
+			"ytnuk_grid": "Ytnuk\\Grid\\Extension"
 		}
 	},
 	"require": {
