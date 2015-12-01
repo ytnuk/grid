@@ -9,7 +9,6 @@ final class Control
 	extends Ytnuk\Application\Control
 {
 
-	const NAME = 'grid';
 	//TODO: every row should be separate component with @persistent $editable and here just set component with id to editable=TRUE & redraw only that component
 	/**
 	 * @var array
