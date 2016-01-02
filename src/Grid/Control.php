@@ -76,10 +76,7 @@ final class Control
 
 	public function handleOrder(string $htmlName)
 	{
-		$this->order = $this->prepareOrderValues(
-			$this->htmlNameToArray($htmlName),
-			$this->order
-		);
+		$this->order = $this->prepareOrderValues($this->htmlNameToArray($htmlName), $this->order);
 		$this->redirect('this');
 	}
 
@@ -100,27 +97,13 @@ final class Control
 	public function getItems() : array
 	{
 		if ( ! is_array($this->items)) {
-			$this->items = call_user_func(
-				$this->items,
-				$this->order,
-				$this->filter
-			);
+			$this->items = call_user_func($this->items, $this->order, $this->filter);
 			if ($this->items instanceof \Traversable) {
 				$this->items = iterator_to_array($this->items);
 			}
-			$this->items = array_combine(
-				array_map(
-					function ($key) {
-						return str_replace(
-							'-',
-							NULL,
-							Nette\Utils\Strings::webalize($key)
-						);
-					},
-					array_keys($this->items)
-				),
-				$this->items
-			);
+			$this->items = array_combine(array_map(function ($key) {
+				return str_replace('-', NULL, Nette\Utils\Strings::webalize($key));
+			}, array_keys($this->items)), $this->items);
 		}
 
 		return $this->items;
@@ -155,27 +138,14 @@ final class Control
 
 	protected function startup() : array //TODO: ultra massive refactor, maybe use grid from someone else
 	{
-		if ( ! $header = array_search(
-			NULL,
-			$this->getItems()
-		)
-		) {
-			$this->items = array_reverse(
-				$this->getItems(),
-				TRUE
-			);
+		if ( ! $header = array_search(NULL, $this->getItems())) {
+			$this->items = array_reverse($this->getItems(), TRUE);
 			$this->items[] = NULL;
-			$this->items = array_reverse(
-				$this->getItems(),
-				TRUE
-			);
+			$this->items = array_reverse($this->getItems(), TRUE);
 			$keys = array_keys($this->items);
 			$header = reset($keys);
 		}
-		$this['form'][$header]->setDefaults($this->filter)->addSubmit(
-			'filter',
-			'grid.filter'
-		)->setValidationScope(FALSE)->onClick[] = [
+		$this['form'][$header]->setDefaults($this->filter)->addSubmit('filter', 'grid.filter')->setValidationScope(FALSE)->onClick[] = [
 			$this,
 			'filter',
 		];
@@ -190,69 +160,47 @@ final class Control
 				$controls[$control->getHtmlName()] = $control;
 			}
 			$inputsCount = 0;
-			$this->setItem(
-				$key,
-				(object) [
-					'id' => $key,
-					'item' => $item,
-					'form' => $form,
-					'inputs' => array_filter(
-						$controls,
-						function ($control) use
-						(
-							$form,
-							$item,
-							&$inputsCount
-						) {
-							if ($this->limitInputs && $inputsCount > $this->limitInputs) {
-								return FALSE;
-							}
-							$inputsCount++;
-							if ($item === NULL) {
-								$control->setAttribute(
-									'onchange',
-									'this.form.filter.click()'
-								);
-							}
-							$filtered = ! (bool) $this->filteredInputs;
-							foreach (
-								$this->filteredInputs as $name
-							) {
-								if (strpos(
-										$control->getHtmlName(),
-										$name
-									) === 0
-								) {
-									$filtered = TRUE;
-									break;
-								}
-							}
+			$this->setItem($key, (object) [
+				'id' => $key,
+				'item' => $item,
+				'form' => $form,
+				'inputs' => array_filter($controls, function ($control) use
+				(
+					$form,
+					$item,
+					&$inputsCount
+				) {
+					if ($this->limitInputs && $inputsCount > $this->limitInputs) {
+						return FALSE;
+					}
+					$inputsCount++;
+					if ($item === NULL) {
+						$control->setAttribute('onchange', 'this.form.filter.click()');
+					}
+					$filtered = ! (bool) $this->filteredInputs;
+					foreach (
+						$this->filteredInputs as $name
+					) {
+						if (strpos($control->getHtmlName(), $name) === 0) {
+							$filtered = TRUE;
+							break;
+						}
+					}
 
-							return $filtered && ! $control instanceof Nette\Forms\Controls\HiddenField;
-						}
-					),
-					'hidden' => array_filter(
-						$controls,
-						function ($control) {
-							return $control instanceof Nette\Forms\Controls\HiddenField;
-						}
-					),
-					'link' => is_callable($this->link) ? call_user_func(
-						$this->link,
-						$item
-					) : $this->link,
-					'active' => $key !== $header ? $this->active === (string) $key : TRUE,
-				]
-			);
+					return $filtered && ! $control instanceof Nette\Forms\Controls\HiddenField;
+				}),
+				'hidden' => array_filter($controls, function ($control) {
+					return $control instanceof Nette\Forms\Controls\HiddenField;
+				}),
+				'link' => is_callable($this->link) ? call_user_func($this->link, $item) : $this->link,
+				'active' => $key !== $header ? $this->active === (string) $key : TRUE,
+			]);
 		}
 
 		return [
 			'items' => $this->getItems(),
 			'filter' => $this->filter,
-			'orderBy' => $this->arrayToHtmlName(
-				$this->order,
-				$sort
-			),
+			'orderBy' => $this->arrayToHtmlName($this->order, $sort),
 			'order' => $sort,
 			'filteredInputs' => $this->filteredInputs,
 		];
@@ -260,14 +208,9 @@ final class Control
 
 	protected function createComponentForm() : Nette\Application\UI\Multiplier
 	{
-		return new Nette\Application\UI\Multiplier(
-			function ($key) : Nette\Forms\Form {
-				return call_user_func(
-					$this->form,
-					$this->getItem($key)
-				);
-			}
-		);
+		return new Nette\Application\UI\Multiplier(function ($key) : Nette\Forms\Form {
+			return call_user_func($this->form, $this->getItem($key));
+		});
 	}
 
 	private function prepareFilterValues(array $values) : array
@@ -297,24 +240,14 @@ final class Control
 		$active = $key === key($values);
 		$value = $values[$key] ?? [];
 		unset($values[$key]);
-		$values[$key] = count($keys) ? $this->prepareOrderValues(
-			$keys,
-			$value
-		) : (! $active ? 'ASC' : ($value === 'ASC' ? 'DESC' : NULL));
+		$values[$key] = count($keys) ? $this->prepareOrderValues($keys, $value) : (! $active ? 'ASC' : ($value === 'ASC' ? 'DESC' : NULL));
 
 		return $values;
 	}
 
 	private function htmlNameToArray($htmlName) : array
 	{
-		return explode(
-			'[',
-			str_replace(
-				[']'],
-				NULL,
-				$htmlName
-			)
-		);
+		return explode('[', str_replace([']'], NULL, $htmlName));
 	}
 
 	private function arrayToHtmlName(
@@ -329,10 +262,6 @@ final class Control
 			$key = '[' . $key . ']';
 		}
 
-		return $key . (is_array($value) ? $this->arrayToHtmlName(
-			$value,
-			$value,
-			TRUE
-		) : NULL);
+		return $key . (is_array($value) ? $this->arrayToHtmlName($value, $value, TRUE) : NULL);
 	}
 }
